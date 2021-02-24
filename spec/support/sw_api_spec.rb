@@ -36,13 +36,13 @@ shared_examples 'a star wars api class' do
       # given
       searched_text = 'yoda'
       fake_described_type = 'fake_described_type'
-      api_stub = stub_request(:get, "#{@base_url}#{fake_described_type}/?search=#{searched_text}")
+      search_request = stub_request(:get, "#{@base_url}#{fake_described_type}/?search=#{searched_text}")
 
       # when
       described_class.search(searched_text)
 
       #then
-      expect(api_stub).to have_been_made.once
+      expect(search_request).to have_been_made.once
     end
   end
 end
