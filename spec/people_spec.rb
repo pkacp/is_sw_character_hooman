@@ -7,5 +7,11 @@ RSpec.describe SWApi::People do
     @people_type = 'people'
   end
 
+  describe '.type' do
+    it 'should equal people' do
+      expect(described_class.type).to eq @people_type
+    end
+  end
+
 
 end
