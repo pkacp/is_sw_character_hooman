@@ -1,8 +1,6 @@
 shared_examples 'a star wars api class' do
   before :all do
     @base_url = 'https://swapi.dev/api/' # TODO Should it be here/in api base/neither
-    @fake_type = 'fake_type'
-    @sample_described_class_url = @base_url + @fake_type
   end
 
   describe '.base_url' do
@@ -23,13 +21,14 @@ shared_examples 'a star wars api class' do
     end
 
     it 'should end with defined type' do
-      expect(described_class.url).to end_with(@fake_type)
+      expect(described_class.url).to end_with(described_class.type)
     end
   end
 
   describe '.search' do
     before :all do
       @sample_searched_text = 'sample'
+      @sample_described_class_url = "#{@base_url}#{described_class.type}"
       @expected_request_path = "#{@sample_described_class_url}/?search=#{@sample_searched_text}"
     end
     subject { described_class.search(@sample_searched_text) }
@@ -54,7 +53,7 @@ shared_examples 'a star wars api class' do
       search_request = stub_request(:get, @expected_request_path)
 
       # when
-      described_class.search(searched_text)
+      described_class.search(@sample_searched_text)
 
       #then
       expect(search_request).to have_been_made.once
