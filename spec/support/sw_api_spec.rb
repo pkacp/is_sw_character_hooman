@@ -1,13 +1,13 @@
 shared_examples 'a star wars api class' do
   before :all do
-    @base_url = 'https://swapi.dev/api/'
+    @base_url = 'https://swapi.dev/api/' # TODO Should it be here/in api base/neither
     @fake_type = 'fake_type'
     @sample_described_class_url = @base_url + @fake_type
   end
 
   describe '.base_url' do
     it 'should be set to sw api url' do
-      expect(described_class.base_url).to eql?(@base_url)
+      expect(described_class.base_url).to eq(@base_url)
     end
   end
 
