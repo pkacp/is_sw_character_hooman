@@ -1,11 +1,12 @@
 shared_examples 'a star wars api class' do
   before :all do
-    @base_url = 'https://swapi.dev/api/' # TODO Should it be here/in api base/neither
+    @sw_api_url = 'https://swapi.dev/api/' # TODO Should it be here/in api base/neither?
+    @fake_type = 'fake_type'
   end
 
   describe '.base_url' do
     it 'should be set to sw api url' do
-      expect(described_class.base_url).to eq(@base_url)
+      expect(described_class.base_url).to eq(@sw_api_url)
     end
   end
 
@@ -13,22 +14,30 @@ shared_examples 'a star wars api class' do
     it 'should return string' do
       expect(described_class.type).to be_an_instance_of String
     end
+
+    it 'should return non empty string' do
+      expect(described_class.type).not_to be_empty
+    end
   end
 
   describe '.url' do
     it 'should start with sw api url' do
-      expect(described_class.url).to start_with(@base_url)
+      expect(described_class.url).to start_with(@sw_api_url)
     end
 
     it 'should end with defined type' do
       expect(described_class.url).to end_with(described_class.type)
+    end
+
+    it 'should be valid url' do
+      expect(described_class.url).to be_a_url
     end
   end
 
   describe '.search' do
     before :all do
       @sample_searched_text = 'sample'
-      @sample_described_class_url = "#{@base_url}#{described_class.type}"
+      @sample_described_class_url = "#{@sw_api_url}#{described_class.type}"
       @expected_request_path = "#{@sample_described_class_url}/?search=#{@sample_searched_text}"
     end
     subject { described_class.search(@sample_searched_text) }
@@ -62,6 +71,12 @@ shared_examples 'a star wars api class' do
 end
 
 shared_examples 'a web request' do |request_url|
+  describe 'request url' do
+    it 'should be valid url' do
+      expect(request_url).to be_a_url
+    end
+  end
+
   describe 'in offline situation' do
     it 'should rise NoInternetError' do
       stub_request(:get, request_url).to_raise(StandardError)
