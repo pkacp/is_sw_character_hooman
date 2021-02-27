@@ -11,9 +11,9 @@ RSpec.describe SWApi::SWApiBase do
     end
   end
 
-  describe '.type' do
+  describe '.resource' do
     it 'should raise NotImplementedError' do
-      expect { described_class.type }.to raise_error NotImplementedError
+      expect { described_class.resource }.to raise_error NotImplementedError
     end
   end
 
