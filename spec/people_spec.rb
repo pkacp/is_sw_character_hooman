@@ -1,7 +1,7 @@
-require_relative '../lib/sw_api/people.rb'
+require_relative '../lib/sw_api/resources/people.rb'
 
 RSpec.describe SWApi::People do
-  it_behaves_like "a star wars api class"
+  it_behaves_like "a star wars api resource"
 
   before :all do
     @people_resource = 'people'

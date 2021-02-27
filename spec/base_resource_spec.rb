@@ -1,6 +1,6 @@
-require_relative '../lib/sw_api/sw_api_base.rb'
+require_relative '../lib/sw_api/resources/base_resource.rb'
 
-RSpec.describe SWApi::SWApiBase do
+RSpec.describe SWApi::BaseResource do
   before :all do
     @sw_api_url = 'https://swapi.dev/api/'
   end

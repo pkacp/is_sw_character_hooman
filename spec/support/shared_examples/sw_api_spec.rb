@@ -1,4 +1,4 @@
-shared_examples 'a star wars api class' do
+shared_examples 'a star wars api resource' do
   before :all do
     @sw_api_url = 'https://swapi.dev/api/' # TODO Should it be here/in api base/neither?
     # @fake_resource = 'fake_resource'

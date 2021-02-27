@@ -1,7 +1,7 @@
-require_relative 'sw_api_base'
+require_relative 'base_resource'
 
 module SWApi
-  class People < SWApiBase
+  class People < BaseResource
     def self.resource
       'people'
     end

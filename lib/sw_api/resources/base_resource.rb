@@ -1,5 +1,5 @@
 module SWApi
-  class SWApiBase
+  class BaseResource
     def self.base_url
       'https://swapi.dev/api/'
     end
