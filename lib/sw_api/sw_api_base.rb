@@ -4,7 +4,7 @@ module SWApi
       'https://swapi.dev/api/'
     end
 
-    def self.type
+    def self.resource
       raise NotImplementedError
     end
 
