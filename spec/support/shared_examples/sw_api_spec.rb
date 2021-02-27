@@ -57,46 +57,36 @@ shared_examples 'a star wars api class' do
       expect { described_class.search(96) }.not_to raise_error ArgumentError
     end
 
-    it 'should create correct query with searched text' do
-      # given
-      search_request = stub_request(:get, @expected_request_path)
+    context 'when correct response from server' do
+      it 'should create correct query with searched text' do
+        # given
+        search_request = stub_request(:get, @expected_request_path)
 
-      # when
-      described_class.search(@sample_searched_text)
+        # when
+        described_class.search(@sample_searched_text)
 
-      #then
-      expect(search_request).to have_been_made.once
+        #then
+        expect(search_request).to have_been_made.once
+      end
+
+      it 'should return a collection' do
+        search_response_none = File.new('spec/fixtures/search/none_results.json')
+        stub_request(:get, @expected_request_path).to_return(body: search_response_none, status: 200)
+        expect(described_class.search(@sample_searched_text)).to be_kind_of Enumerable
+      end
+
+      it 'should return an empty collection' do
+        search_response_none = File.new('spec/fixtures/search/none_results.json')
+        stub_request(:get, @expected_request_path).to_return(body: search_response_none, status: 200)
+        expect(described_class.search(@sample_searched_text)).to be_empty
+      end
+
+      it "should return collection of #{described_class} objects" do
+        search_response_one = File.new('spec/fixtures/search/multiple_results.json')
+        stub_request(:get, @expected_request_path).to_return(body: search_response_one, status: 200)
+        expect(described_class.search(@sample_searched_text)).to all(be_an_instance_of(described_class))
+      end
     end
   end
-end
-
-shared_examples 'a web request' do |request_url|
-  describe 'request url' do
-    it 'should be valid url' do
-      expect(request_url).to be_a_url
-    end
-  end
-
-  describe 'in offline situation' do
-    it 'should rise NoInternetError' do
-      stub_request(:get, request_url).to_raise(StandardError)
-      expect(subject).to raise_error ConnectionError
-    end
-  end
-
-  describe 'when server not found' do
-    it 'should return ServerNotFound' do
-      stub_request(:get, request_url).to_timeout
-      expect(subject).to raise_error ServerNotFound
-    end
-  end
-
-  describe 'when api server error' do
-    it 'should return InternalServerError' do
-      stub_request(:get, request_url).to_return(status: [500, "Internal Server Error"])
-      expect(subject).to raise_error InternalServerError
-    end
-  end
-# 200
 end
 
