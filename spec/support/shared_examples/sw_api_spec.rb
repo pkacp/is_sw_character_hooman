@@ -1,12 +1,25 @@
 shared_examples 'a star wars api resource' do
   before :all do
     @sw_api_url = 'https://swapi.dev/api/' # TODO Should it be here/in api base/neither?
+    @search_specifier = '?search='
     # @fake_resource = 'fake_resource'
+  end
+
+  describe '.new' do
+    it 'should accept Hash argument' do
+      expect(described_class.new(Hash.new)).not_to raise_error ArgumentError
+    end
   end
 
   describe '.base_url' do
     it 'should be set to sw api url' do
       expect(described_class.base_url).to eq(@sw_api_url)
+    end
+  end
+
+  describe '.search_specifier' do
+    it 'should be set to sw api url' do
+      expect(described_class.search_specifier).to eq(@search_specifier)
     end
   end
 
@@ -38,8 +51,9 @@ shared_examples 'a star wars api resource' do
     before :all do
       @sample_searched_text = 'sample'
       @sample_described_class_url = "#{@sw_api_url}#{described_class.resource}"
-      @expected_request_path = "#{@sample_described_class_url}/?search=#{@sample_searched_text}"
+      @expected_request_path = "#{@sample_described_class_url}/#{@search_specifier}#{@sample_searched_text}"
     end
+
     subject { described_class.search(@sample_searched_text) }
     it_behaves_like "a web request", @expected_request_path
 
@@ -58,7 +72,7 @@ shared_examples 'a star wars api resource' do
     end
 
     context 'when correct response from server' do
-      it 'should create correct query with searched text' do
+      it 'should make correct query with searched text' do
         # given
         search_request = stub_request(:get, @expected_request_path)
 
@@ -75,16 +89,20 @@ shared_examples 'a star wars api resource' do
         expect(described_class.search(@sample_searched_text)).to be_kind_of Enumerable
       end
 
-      it 'should return an empty collection' do
-        search_response_none = File.new('spec/fixtures/search/none_results.json')
-        stub_request(:get, @expected_request_path).to_return(body: search_response_none, status: 200)
-        expect(described_class.search(@sample_searched_text)).to be_empty
+      context 'when server responds with no results' do
+        it 'should return an empty collection' do
+          search_response_none = File.new('spec/fixtures/search/none_results.json')
+          stub_request(:get, @expected_request_path).to_return(body: search_response_none, status: 200)
+          expect(described_class.search(@sample_searched_text)).to be_empty
+        end
       end
 
-      it "should return collection of #{described_class} objects" do
-        search_response_one = File.new('spec/fixtures/search/multiple_results.json')
-        stub_request(:get, @expected_request_path).to_return(body: search_response_one, status: 200)
-        expect(described_class.search(@sample_searched_text)).to all(be_an_instance_of(described_class))
+      context 'when server responds with multiple results' do
+        it "should return collection of #{described_class} objects" do
+          search_response_multiple = File.new('spec/fixtures/search/multiple_results.json')
+          stub_request(:get, @expected_request_path).to_return(body: search_response_multiple, status: 200)
+          expect(described_class.search(@sample_searched_text)).to all(be_an_instance_of(described_class))
+        end
       end
     end
   end

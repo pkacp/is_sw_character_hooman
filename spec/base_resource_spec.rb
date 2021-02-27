@@ -17,4 +17,10 @@ RSpec.describe SWApi::BaseResource do
     end
   end
 
+  describe '.search' do
+    it 'should raise NotImplementedError' do
+      expect { described_class.resource }.to raise_error NotImplementedError
+    end
+  end
+
 end
