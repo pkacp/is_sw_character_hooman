@@ -57,7 +57,7 @@ RSpec.describe SWApi::BaseResource do
 
         it 'should return resource instance' do
           # given
-          people_sample_json = File.new('spec/fixtures/link/people.json')
+          people_sample_json = File.read('spec/fixtures/link/people.json')
           stub_request(:get, @link_resource).to_return(body: people_sample_json, status: 200)
           # when
           result = described_class.get_from_link(@link_resource)
@@ -79,7 +79,7 @@ RSpec.describe SWApi::BaseResource do
 
         it 'should return resource instance' do
           # given
-          species_sample_json = File.new('spec/fixtures/link/species.json')
+          species_sample_json = File.read('spec/fixtures/link/species.json')
           stub_request(:get, @link_resource).to_return(body: species_sample_json, status: 200)
           # when
           result = described_class.get_from_link(@link_resource)
