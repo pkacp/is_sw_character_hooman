@@ -1,4 +1,6 @@
-Rspec.describe Character do
+require_relative '../lib/character.rb'
+
+RSpec.describe Character do
   describe '.new' do
     it 'should take unlimited named parameters' do
       expect(described_class).to respond_to(:new).with_unlimited_arguments
@@ -35,6 +37,11 @@ Rspec.describe Character do
       mock_race = instance_double('Race', name: 'not a human')
       test_subject = described_class.new(name: 'fake_name', race: [mock_race])
       expect(test_subject.human?).to eq false
+    end
+
+    it 'should return probably if none races provided' do
+      test_subject = described_class.new(name: 'fake_name', race: [])
+      expect(test_subject.human?).to eq 'probably'
     end
   end
 

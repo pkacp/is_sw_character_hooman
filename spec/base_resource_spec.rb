@@ -48,7 +48,7 @@ RSpec.describe SWApi::BaseResource do
       context 'People resource' do # TODO Refactor to DRY
         it 'should attempt to create instance of resource' do
           # given
-          people_resource_class = class_double('People', resource: 'people')
+          people_resource_class = class_double('SWApi::People', resource: 'people')
           # when
           described_class.get_from_link(@link_resource)
           # then
@@ -70,7 +70,7 @@ RSpec.describe SWApi::BaseResource do
         @link_resource = "#{@sw_api_url}species/1/"
         it 'should attempt to create instance of resource' do
           # given
-          species_resource_class = class_double('Species', resource: 'species')
+          species_resource_class = class_double('SWApi::Species', resource: 'species')
           # when
           described_class.get_from_link(@link_resource)
           # then

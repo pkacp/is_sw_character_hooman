@@ -1,4 +1,6 @@
-Rspec.describe Race do
+require_relative '../lib/race.rb'
+
+RSpec.describe Race do
   describe '.new' do
     it 'should take unlimited named parameters' do
       expect(described_class).to respond_to(:new).with_unlimited_arguments

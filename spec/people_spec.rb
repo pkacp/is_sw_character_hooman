@@ -16,7 +16,7 @@ RSpec.describe SWApi::People do
 
   context 'getters' do
     before :all do
-      @hash_params = Json.parse(File.read('spec/fixtures/link/people.json'))
+      @hash_params = JSON.parse(File.read('spec/fixtures/link/people.json'))
     end
 
     describe '#name' do
@@ -45,35 +45,12 @@ RSpec.describe SWApi::People do
       end
 
       context 'when species links in params present' do
-        before :each do
-          @hash_params_with_one_species = @hash_params_with_two_species = @hash_params
-          species_1_path = 'http://swapi.dev/api/species/1/'
-          species_2_path = 'http://swapi.dev/api/species/2/'
-          @hash_params_with_one_species['species'] = [species_1_path]
-          @hash_params_with_two_species['species'] = [species_1_path, species_2_path]
-          @request_species_1 = stub_request(:get, species_1_path)
-          @request_species_2 = stub_request(:get, species_2_path)
+        it 'should return collection of links' do
+          species_links_array = %w[http://swapi.dev/api/species/1/ http://swapi.dev/api/species/2/]
+          params_with_species = @hash_params.merge(species: species_links_array)
+          test_subject = described_class.new(params_with_species)
+          expect(test_subject.species).to contain_exactly(species_links_array)
         end
-
-        it 'should make request to species link' do
-          test_subject = described_class.new(@hash_params_with_one_species)
-          test_subject.species
-          expect(@request_species_1).to have_been_made.once
-        end
-
-        it 'shoule make request to each species link' do
-          test_subject = described_class.new(@hash_params_with_two_species)
-          test_subject.species
-          expect(@request_species_1).to have_been_made.once
-          expect(@request_species_2).to have_been_made.once
-        end
-
-        it 'shoule return a collection of SWApi::Species' do
-          test_subject = described_class.new(@hash_params_with_two_species)
-          result = test_subject.species
-          expect(result).to all(be_an(SWApi::Species))
-        end
-
       end
     end
   end
