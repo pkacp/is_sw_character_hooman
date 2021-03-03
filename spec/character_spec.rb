@@ -3,19 +3,19 @@ require_relative '../lib/character.rb'
 RSpec.describe Character do
   describe '.new' do
     it 'should take unlimited named parameters' do
-      expect(described_class).to respond_to(:new).with_unlimited_arguments
+      expect(described_class).to respond_to(:new).with_any_keywords
     end
 
     it 'should raise ArgumentError if no name argument provided' do
-      expect(described_class.new(race: [])).to raise_error(ArgumentError)
+      expect{described_class.new(race: [])}.to raise_error(ArgumentError)
     end
 
     it 'should raise ArgumentError if no race argument provided' do
-      expect(described_class.new(name: 'fake_name')).to raise_error(ArgumentError)
+      expect{described_class.new(name: 'fake_name')}.to raise_error(ArgumentError)
     end
 
     it 'sould raise TypeError if race is not a collection' do
-      expect(described_class.new(name: 'fake_name', race: nil)).to raise_error(TypeError)
+      expect{described_class.new(name: 'fake_name', race: 'fake_race')}.to raise_error(TypeError)
     end
   end
 
