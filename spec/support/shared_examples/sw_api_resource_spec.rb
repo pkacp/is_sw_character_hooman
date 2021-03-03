@@ -6,7 +6,8 @@ shared_examples 'a star wars api resource' do
   end
 
   describe '.new' do
-    it 'should accept Hash argument' do
+    it 'should take one Hash argument' do
+      expect(described_class).to respond_to(:new).with(1).argument
       expect(described_class.new(Hash.new)).not_to raise_error ArgumentError
     end
   end
