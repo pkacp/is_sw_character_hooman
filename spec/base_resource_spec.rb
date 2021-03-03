@@ -5,6 +5,13 @@ RSpec.describe SWApi::BaseResource do
     @sw_api_url = 'https://swapi.dev/api/'
   end
 
+  describe '.new' do
+    it 'should take one Hash argument' do
+      expect(described_class).to respond_to(:new).with(1).argument
+      exactly(described_class.new(Hash.new)).not_to raise_error ArgumentError
+    end
+  end
+
   describe '.base_url' do
     it 'should be set to sw api url' do
       expect(described_class.base_url).to eq(@sw_api_url)
