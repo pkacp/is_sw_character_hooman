@@ -1,0 +1,3 @@
+class HttpConnector
+
+end

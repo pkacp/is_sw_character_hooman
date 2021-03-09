@@ -1,4 +1,4 @@
-require_relative '../lib/http_connector.rbor'
+require_relative '../lib/http_connector.rb'
 
 RSpec.describe HttpConnector do
   describe '.new' do
