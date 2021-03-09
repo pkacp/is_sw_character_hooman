@@ -27,19 +27,16 @@ RSpec.describe SWApi::BaseResource do
 
     before :all do
       @link_resource = "#{@sw_api_url}people/1/"
+      allow(HttpConnector).to receive(:get).and_return(Hash.new)
     end
 
     it 'should take one argument' do
       expect(described_class).to respond_to(:get_from_link).with(1).argument
     end
 
-    it 'should make request to given link' do
-      # given
-      stubbed_link = stub_request(:get, @link_resource)
-      # when
+    it 'should call HttpConnector' do
       described_class.get_from_link(@link_resource)
-      # then
-      expect(stubbed_link).to have_been_made.once
+      expect(HttpConnector).to receive(:get).with(@link_resource)
     end
 
     context 'when server responds with valid response' do
@@ -55,8 +52,8 @@ RSpec.describe SWApi::BaseResource do
 
         it 'should return resource instance' do
           # given
-          people_sample_json = File.read('spec/fixtures/link/people.json')
-          stub_request(:get, @link_resource).to_return(body: people_sample_json, status: 200)
+          people_sample_json = JSON.parse(File.read('spec/fixtures/link/people.json'))
+          allow(HttpConnector).to receive(:get).and_return(people_sample_json)
           # when
           result = described_class.get_from_link(@link_resource)
           # then
@@ -77,8 +74,8 @@ RSpec.describe SWApi::BaseResource do
 
         it 'should return resource instance' do
           # given
-          species_sample_json = File.read('spec/fixtures/link/species.json')
-          stub_request(:get, @link_resource).to_return(body: species_sample_json, status: 200)
+          species_sample_json = JSON.parse(File.read('spec/fixtures/link/species.json'))
+          allow(HttpConnector).to receive(:get).and_return(species_sample_json)
           # when
           result = described_class.get_from_link(@link_resource)
           # then

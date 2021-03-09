@@ -63,7 +63,7 @@ RSpec.describe SWApi::People do
     end
 
     it 'should take unlimited number of parameters' do
-      expect(subject).to respond_to(:includes).with_unlimited_arguments
+      expect(subject).to respond_to(:includes).with_any_keywords
     end
 
     it 'should raise MissingKeyError if no such key is present' do
@@ -95,7 +95,7 @@ RSpec.describe SWApi::People do
 
       it 'should call SWApi::BaseResource.get_from_link for each link in collection' do
         base_resource = class_double("SWApi::BaseResource", get_from_link: nil)
-        species_links_array = %w[http://swapi.dev/api/species/1/ http://swapi.dev/api/species/2/]
+        species_links_array = %w[https://swapi.dev/api/species/1/ https://swapi.dev/api/species/2/]
         params_with_species = @hash_params.merge(species: species_links_array)
         test_subject = described_class.new(params_with_species)
 
@@ -109,7 +109,7 @@ RSpec.describe SWApi::People do
       it 'should insert at requested key returned values' do
         species_resource = 'fake_resource'
         class_double("SWApi::BaseResource", get_from_link: species_resource)
-        species_links_array = %w[http://swapi.dev/api/species/1/ http://swapi.dev/api/species/2/]
+        species_links_array = %w[https://swapi.dev/api/species/1/ https://swapi.dev/api/species/2/]
         params_with_species = @hash_params.merge(species: species_links_array)
         test_subject = described_class.new(params_with_species)
 
