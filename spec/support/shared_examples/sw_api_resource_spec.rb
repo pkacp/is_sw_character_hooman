@@ -1,8 +1,7 @@
 shared_examples 'a star wars api resource' do
   before :all do
-    @sw_api_url = 'https://swapi.dev/api/' # TODO Should it be here/in api base/neither?
+    @sw_api_url = 'https://swapi.dev/api/'
     @search_specifier = '?search='
-    # @fake_resource = 'fake_resource'
   end
 
   describe '.new' do
@@ -53,61 +52,38 @@ shared_examples 'a star wars api resource' do
       @sample_text = 'sample'
       @sample_described_class_url = "#{@sw_api_url}#{described_class.resource}"
       @expected_request_path = "#{@sample_described_class_url}/#{@search_specifier}#{@sample_text}"
+      allow(HttpConnector).to receive(:get).and_return(Hash.new)
     end
 
     subject { described_class.search(@sample_text) }
-    it_behaves_like "a web request", @expected_request_path
 
     it 'should take one argument' do
       expect(described_class).to respond_to(:search).with(1).argument
     end
 
-    # First approach .to_s
-    # Second approach String()
-    # Third approach is an instance of String
-    xit 'argument should behave like string' do
-      expect { described_class.search(:r2) }.not_to raise_error ArgumentError
-      expect { described_class.search('r2') }.not_to raise_error ArgumentError
-      expect { described_class.search(nil) }.not_to raise_error ArgumentError
-      expect { described_class.search(96) }.not_to raise_error ArgumentError
+    it 'should call HttpConnector once with correct url' do
+      expect(HttpConnector).to receive(:get).with(@expected_request_path)
     end
 
-    # context 'when argument causes incorrect url' do
-    #   it 'should raise ArgumentError' do
-    #     expect(described_class.search('?&#==##?FAKE?==')).to raise_error ArgumentError
-    #   end
-    # end
-
     context 'when correct response from server' do
-      it 'should make correct query with searched text' do
-        # given
-        search_request = stub_request(:get, @expected_request_path)
-
-        # when
-        described_class.search(@sample_text)
-
-        #then
-        expect(search_request).to have_been_made.once
-      end
-
       it 'should return a collection' do
-        search_response_none = File.read('spec/fixtures/search/none_results.json')
-        stub_request(:get, @expected_request_path).to_return(body: search_response_none, status: 200)
+        search_response_none = JSON.parse(File.read('spec/fixtures/search/none_results.json'))
+        allow(HttpConnector).to receive(:get).and_return(search_response_none)
         expect(described_class.search(@sample_text)).to be_kind_of Enumerable
       end
 
       context 'when server responds with no results' do
         it 'should return an empty collection' do
-          search_response_none = File.read('spec/fixtures/search/none_results.json')
-          stub_request(:get, @expected_request_path).to_return(body: search_response_none, status: 200)
+          search_response_none = JSON.parse(File.read('spec/fixtures/search/none_results.json'))
+          allow(HttpConnector).to receive(:get).and_return(search_response_none)
           expect(described_class.search(@sample_text)).to be_empty
         end
       end
 
       context 'when server responds with multiple results' do
         it "should return collection of #{described_class} objects" do
-          search_response_multiple = File.read('spec/fixtures/search/multiple_results.json')
-          stub_request(:get, @expected_request_path).to_return(body: search_response_multiple, status: 200)
+          search_response_multiple = JSON.parse(File.read('spec/fixtures/search/multiple_results.json'))
+          allow(HttpConnector).to receive(:get).and_return(search_response_multiple)
           expect(described_class.search(@sample_text)).to all(be_an_instance_of(described_class))
         end
       end

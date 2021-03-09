@@ -33,8 +33,6 @@ RSpec.describe SWApi::BaseResource do
       expect(described_class).to respond_to(:get_from_link).with(1).argument
     end
 
-    it_behaves_like "a web request", @link_resource
-
     it 'should make request to given link' do
       # given
       stubbed_link = stub_request(:get, @link_resource)
