@@ -5,11 +5,7 @@ RSpec.describe HttpConnector do
     let(:incorrect_url) { ".,m.////;'??&'" }
 
     it 'should take one parameter' do
-      it { is_expected.to respond_to(:new).with(1).argument }
-    end
-
-    it 'should raise ArgumentError if parameter is incorrect url' do
-      expect { described_class.new(incorrect_url) }.to raise_error(ArgumentError)
+      expect(described_class).to respond_to(:new).with(1).argument
     end
   end
 
@@ -20,14 +16,14 @@ RSpec.describe HttpConnector do
 
     before do
       allow(HTTParty).to receive(:get).and_return(response)
-      allow(JSON).to receive(:parse)
-
-      subject { described_class.new(sample_url) }
+      allow(JSON).to receive(:parse).and_return(Hash.new)
     end
+
+    subject { described_class.new(sample_url) }
 
     it 'should call HTTParty.get once' do
       subject.get
-      expect(HTTParty).to have_received(:get).with(github_url)
+      expect(HTTParty).to have_received(:get).with(sample_url)
     end
 
     context 'when everything is ok' do
