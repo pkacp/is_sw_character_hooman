@@ -48,11 +48,13 @@ shared_examples 'a star wars api resource' do
   end
 
   describe '.search' do
-    before :all do
+    before do
       @sample_text = 'sample'
       @sample_described_class_url = "#{@sw_api_url}#{described_class.resource}"
       @expected_request_path = "#{@sample_described_class_url}/#{@search_specifier}#{@sample_text}"
-      allow(HttpConnector).to receive(:get).and_return(Hash.new)
+
+      @http_connector_object = instance_double(HttpConnector, get: Hash.new)
+      allow(HttpConnector.to receive(:new).with(@expected_request_path).and_return(@http_connector_object))
     end
 
     subject { described_class.search(@sample_text) }
@@ -61,21 +63,25 @@ shared_examples 'a star wars api resource' do
       expect(described_class).to respond_to(:search).with(1).argument
     end
 
-    it 'should call HttpConnector once with correct url' do
-      expect(HttpConnector).to receive(:get).with(@expected_request_path)
+    it 'should create HttpConnector with correct url and call get method' do
+      expected_http_object = described_class.search(@sample_text)
+      expected_http_object.get
+
+      expect(HttpConnector).to receive(:new).with(@expected_request_path)
+      expect(@http_connector_object).to receive(:get)
     end
 
     context 'when correct response from server' do
       it 'should return a collection' do
         search_response_none = JSON.parse(File.read('spec/fixtures/search/none_results.json'))
-        allow(HttpConnector).to receive(:get).and_return(search_response_none)
+        allow(@http_connector_object).to receive(:get).and_return(search_response_none)
         expect(described_class.search(@sample_text)).to be_kind_of Enumerable
       end
 
       context 'when server responds with no results' do
         it 'should return an empty collection' do
           search_response_none = JSON.parse(File.read('spec/fixtures/search/none_results.json'))
-          allow(HttpConnector).to receive(:get).and_return(search_response_none)
+          allow(@http_connector_object).to receive(:get).and_return(search_response_none)
           expect(described_class.search(@sample_text)).to be_empty
         end
       end
@@ -83,7 +89,7 @@ shared_examples 'a star wars api resource' do
       context 'when server responds with multiple results' do
         it "should return collection of #{described_class} objects" do
           search_response_multiple = JSON.parse(File.read('spec/fixtures/search/multiple_results.json'))
-          allow(HttpConnector).to receive(:get).and_return(search_response_multiple)
+          allow(@http_connector_object).to receive(:get).and_return(search_response_multiple)
           expect(described_class.search(@sample_text)).to all(be_an_instance_of(described_class))
         end
       end
